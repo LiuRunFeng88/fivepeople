@@ -17,7 +17,7 @@ define('CACHE_USER_TOKEN_ID_KEY_PREFIX', 'USER_TOKEN_FOR_ID_');
  * @return []
  */
 function suc_return($arr = []){
-    return ['result'    => 0,'data'      => $arr];
+    return ['code'    => 0,'msg'=>'成功','data'      => $arr];
 }
 /**
  * @desc 失败返回
@@ -26,7 +26,11 @@ function suc_return($arr = []){
  * @return []
  */
 function err_return($code, $msg){
-    return ['result'	=> -1,'err_code'	=> $code,'err_msg'	=> "{$msg}"];
+    return ['code'	=> $code,'msg'	=> "{$msg}"];
+}
+
+function send_sms_code($mobile,$intent){
+
 }
 
 /**

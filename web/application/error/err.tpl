@@ -5,9 +5,8 @@ if (!function_exists('general_err_exit')) {
 	{
 		header('content-type:application/json');
 		echo json_encode([
-			'result'	=> '-1',
-			'err_code'	=> "{$code}",
-			'err_msg'	=> "{$msg}"
+			'code'	=> '500',
+			'msg'	=> "{$msg}"
 		]);
 		exit();
 	}
