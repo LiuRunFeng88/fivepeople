@@ -8,5 +8,73 @@
 // +----------------------------------------------------------------------
 // | Author: 流年 <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-
+define('CACHE_USER_TOKEN_KEY_PREFIX','USER_TOKEN_');
+define('CACHE_USER_TOKEN_ID_KEY_PREFIX', 'USER_TOKEN_FOR_ID_');
 // 应用公共文件
+/**
+ * @desc 成功返回
+ * @param [] $arr
+ * @return []
+ */
+function suc_return($arr = []){
+    return ['result'    => 0,'data'      => $arr];
+}
+/**
+ * @desc 失败返回
+ * @param mixed $code
+ * @param string $msg
+ * @return []
+ */
+function err_return($code, $msg){
+    return ['result'	=> -1,'err_code'	=> $code,'err_msg'	=> "{$msg}"];
+}
+
+/**
+ * 给登陆用户申请token
+ * @param int $user_id
+ * @return string
+ */
+function createTokenForLoginUser($user_id){
+    $token = \think\Cache::get(CACHE_USER_TOKEN_ID_KEY_PREFIX. $user_id);
+    if (empty($token)) {
+        $retry = 0;
+        do{
+            $retry += 1;
+            if ($retry > 10)return false;
+            $token = substr(md5(rand(1000, 9999) . $user_id . time()), 0, 16);
+            $exist = \think\Cache::get(CACHE_USER_TOKEN_KEY_PREFIX . $token);
+        }while(!empty($exist));
+    }
+    _updateUserToken($user_id,$token);
+    return $token;
+}
+
+/**
+ * 根据用户token返回用户 并更新token有效期
+ * @param string $token
+ * @return int
+ */
+function getUserIdForLoginUser($token){
+    $user_id = \think\Cache::get(CACHE_USER_TOKEN_KEY_PREFIX. $token);
+    if(empty($user_id)){
+        return 0;
+    }
+    //更新有效期
+    _updateUserToken($user_id,$token);
+    return $user_id;
+}
+/**
+ * 重新登记token
+ * @param int $user_id
+ * @param String $token
+ */
+function _updateUserToken($user_id,$token,$keep = true){
+    if(!$keep){
+        \think\Cache::clear(CACHE_USER_TOKEN_ID_KEY_PREFIX. $user_id);
+        \think\Cache::clear(CACHE_USER_TOKEN_KEY_PREFIX. $token);
+    }else {
+        \think\Cache::set(CACHE_USER_TOKEN_ID_KEY_PREFIX. $user_id, $token, 3600 * 24 * 7);
+        \think\Cache::set(CACHE_USER_TOKEN_KEY_PREFIX. $token, $user_id, 3600 * 24 * 7);
+    }
+    return true;
+}
