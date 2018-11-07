@@ -27,6 +27,7 @@ class ErrorCode {
     const ERROR_LOGIN_TOKEN     = '20014';//错误的token
     const ERROR_USER_NOT_FOUNDD = '20015';//用户不存在
     const ERROR_USER_CLOSURE    = '20016';//用户被封禁，禁止登录
+    const ERROR_MOBILE_REGISTERED= '20017';//手机号已注册
     //综合任务
     const TASK_RECLAIM = '32001';//请勿重复领取！
     //
@@ -55,6 +56,7 @@ class ErrorCode {
         self::ERROR_LOGIN_TOKEN     => '错误的token',
         self::ERROR_USER_NOT_FOUNDD => '用户不存在',
         self::ERROR_USER_CLOSURE    => '用户被封禁，禁止登录',
+        self::ERROR_MOBILE_REGISTERED=> '手机号已注册',
         //综合任务
     ];
     /**

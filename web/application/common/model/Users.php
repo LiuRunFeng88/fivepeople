@@ -31,4 +31,10 @@ class Users extends Model {
         return $users;
     }
 
+    //手机号是否注册
+    public static function is_register($mobile){
+        $num = self::where(['mobile'=>$mobile])->count('id');
+        return $num;
+    }
+
 }

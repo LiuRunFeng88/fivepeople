@@ -9,6 +9,7 @@ namespace app\api_v1\controller;
 
 use app\common\controller\BaseController;
 use app\common\model\ErrorCode;
+use think\Cache;
 
 class Init extends BaseController {
 
@@ -52,12 +53,58 @@ class Init extends BaseController {
             if(empty($this->_data['mobile']) && empty($this->_data['intent'])){
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INPUT_ERROR),ErrorCode::INPUT_ERROR);
             }
-            if ($this->_data['intent'] == 1){ //注册验证码
-
-            }elseif ($this->_data['intent'] == 2){ //重置密码验证码
-
+            if (!preg_match('/^1[0-9]{10}$/', $this->_data['mobile'])){
+                throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::ERROR_LOGIN_MOBILE),ErrorCode::ERROR_LOGIN_MOBILE);
             }
-            return suc_return();
+            $is_register = \app\common\model\Users::is_register($this->_data['mobile']);
+            if (!empty($is_register)){
+                throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::ERROR_MOBILE_REGISTERED),ErrorCode::ERROR_MOBILE_REGISTERED);
+            }
+            $code = send_sms_code($this->_data['mobile'],$this->_data['intent']);
+            return suc_return(['code'=>$code]);
+        }catch (\Exception $e){
+            return err_return($e->getCode(),$e->getMessage());
+        }
+    }
+
+    //注册
+    public function account_register(){
+        try{
+            $this->_checkAppRequest();
+
+            if(empty($this->_data['mobile']) && empty($this->_data['password']) && empty($this->_data['code'])){
+                throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INPUT_ERROR),ErrorCode::INPUT_ERROR);
+            }
+            if (!preg_match('/^1[0-9]{10}$/', $this->_data['mobile'])){
+                throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::ERROR_LOGIN_MOBILE),ErrorCode::ERROR_LOGIN_MOBILE);
+            }
+            $is_register = \app\common\model\Users::is_register($this->_data['mobile']);
+            if (!empty($is_register)){
+                throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::ERROR_MOBILE_REGISTERED),ErrorCode::ERROR_MOBILE_REGISTERED);
+            }
+            $code = Cache::get(REGISTER_CODE.$this->_data['mobile']);
+            if ($this->_data['code'] == $code){
+                Cache::rm(REGISTER_CODE.$this->_data['mobile']);
+                $users = new \app\common\model\Users([
+                    'nickname'=>'手机用户_'.$this->_data['mobile'],
+                    'avatar_url'=>'http://118.24.222.80/fivepeopledev/web/public/img/default.jpg',
+                    'mobile'=>$this->_data['mobile'],
+                    'password'=>md5($this->_data['password']),
+                    'register_at'=>time(),
+                    'register_ip'=>get_remote_ip(),
+                ]);
+                $users->save();
+                if (empty($users)){
+                    throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INNER_ERROR),ErrorCode::INNER_ERROR);
+                }
+                $users = \app\common\model\Users::get($users->id);
+                $token = createTokenForLoginUser($users->id);
+                unset($users['password']);
+                unset($users['id']);
+                return suc_return(['token'=>$token,'users'=>$users]);
+            }else{
+                throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::ERROR_LOGIN_CODE),ErrorCode::ERROR_LOGIN_CODE);
+            }
         }catch (\Exception $e){
             return err_return($e->getCode(),$e->getMessage());
         }

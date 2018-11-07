@@ -8,8 +8,12 @@
 // +----------------------------------------------------------------------
 // | Author: 流年 <liu21st@gmail.com>
 // +----------------------------------------------------------------------
+use app\common\model\ErrorCode;
+
 define('CACHE_USER_TOKEN_KEY_PREFIX','USER_TOKEN_');
 define('CACHE_USER_TOKEN_ID_KEY_PREFIX', 'USER_TOKEN_FOR_ID_');
+define('REGISTER_CODE', 'REGISTER_CODE_');
+define('RESET_PASSWORD', 'RESET_PASSWORD_');
 // 应用公共文件
 /**
  * @desc 成功返回
@@ -26,11 +30,33 @@ function suc_return($arr = []){
  * @return []
  */
 function err_return($code, $msg){
+    if ($code == 0){
+        $code = ErrorCode::INPUT_ERROR;
+    }
     return ['code'	=> $code,'msg'	=> "{$msg}"];
 }
-
+//发送验证码
 function send_sms_code($mobile,$intent){
+    if ($intent == 1){  //注册验证码
+        $code = rand(0000,9999);
+        \think\Cache::set(REGISTER_CODE.$mobile,$code,3600);
+        return $code;
+    }else{ //重置密码验证码
+        $code = rand(0000,9999);
+        \think\Cache::set(RESET_PASSWORD.$mobile,$code,3600);
+        return $code;
+    }
+}
 
+function get_remote_ip(){
+    if (!empty($_SERVER["HTTP_CLIENT_IP"])){
+        $ip = $_SERVER["HTTP_CLIENT_IP"];
+    }elseif(!empty($_SERVER["HTTP_X_FORWARDED_FOR"])){
+        $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+    }else{
+        $ip = $_SERVER["REMOTE_ADDR"];
+    }
+    return $ip;
 }
 
 /**
