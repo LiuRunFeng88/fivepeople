@@ -164,6 +164,7 @@ class Init extends BaseController {
             if (empty($users)) {
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::ERROR_MOBILE_NO_REGISTERED), ErrorCode::ERROR_MOBILE_NO_REGISTERED);
             }
+            $users->password = md5($this->_data['mobile']);
             $users->save();
             //清除redis
             Cache::rm(RESET_PASSWORD.$this->_data['mobile']);
