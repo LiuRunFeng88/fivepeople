@@ -28,7 +28,7 @@ class ErrorCode {
     const ERROR_USER_NOT_FOUNDD = '20015';//用户不存在
     const ERROR_USER_CLOSURE    = '20016';//用户被封禁，禁止登录
     const ERROR_MOBILE_REGISTERED= '20017';//手机号已注册
-    const ERROR_MOBILE_NO_REGISTERED= '20017';//手机号未已注册
+    const ERROR_MOBILE_NO_REGISTERED= '20018';//手机号未已注册
     //综合任务
     const TASK_RECLAIM = '32001';//请勿重复领取！
     //
