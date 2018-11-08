@@ -50,6 +50,12 @@ class BaseController extends Controller {
             if (empty($this->_user)) {//去用户中心拉取数据
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::ERROR_USER_NOT_FOUNDD), ErrorCode::ERROR_USER_NOT_FOUNDD);
             }
+            if (empty($this->_user->last_request_at)){ //用户第一次登录处理逻辑
+
+            }
+            //更新用户最后操作时间
+            $this->_user->last_request_at = time();
+            $this->_user->save();
             return true;
         }catch (\Exception $e){
             $this->e = $e;

@@ -16,7 +16,7 @@ class ErrorCode {
     const REQUEST_ERROR_APP_ID  = '10006';//APP_ID错误
     const REQUEST_ERROR_TIME    = '10007';//无效的请求
     const REQUEST_TOKEN_NOT     = '10008';//COMMON_TOKEN不能为空
-    const REQUEST_TOKEN_ERROR   = '10009';//COMMON_TOKEN无效
+    const REQUEST_TOKEN_ERROR   = '10009';//验证过期请重新登录
     const REQUEST_FREQUENT      = '10010';//请求频繁
     //用户
     const ERROR_NOT_LOGIN       = '20000';//没有登陆
@@ -28,6 +28,7 @@ class ErrorCode {
     const ERROR_USER_NOT_FOUNDD = '20015';//用户不存在
     const ERROR_USER_CLOSURE    = '20016';//用户被封禁，禁止登录
     const ERROR_MOBILE_REGISTERED= '20017';//手机号已注册
+    const ERROR_MOBILE_NO_REGISTERED= '20017';//手机号未已注册
     //综合任务
     const TASK_RECLAIM = '32001';//请勿重复领取！
     //
@@ -44,8 +45,8 @@ class ErrorCode {
         self::REQUEST_EMPTR_APP_ID  => 'APP_ID不能为空',
         self::REQUEST_ERROR_APP_ID  => 'APP_ID错误',
         self::REQUEST_ERROR_TIME    => '无效的请求',
-        self::REQUEST_TOKEN_NOT     => 'COMMON_TOKEN不能为空',
-        self::REQUEST_TOKEN_ERROR   => 'COMMON_TOKEN无效',
+        self::REQUEST_TOKEN_NOT     => 'TOKEN不能为空',
+        self::REQUEST_TOKEN_ERROR   => '验证过期请重新登录',
         self::REQUEST_FREQUENT      => '请求频繁',
         //用户
         self::ERROR_NOT_LOGIN       => '没有登陆',
@@ -57,6 +58,7 @@ class ErrorCode {
         self::ERROR_USER_NOT_FOUNDD => '用户不存在',
         self::ERROR_USER_CLOSURE    => '用户被封禁，禁止登录',
         self::ERROR_MOBILE_REGISTERED=> '手机号已注册',
+        self::ERROR_MOBILE_NO_REGISTERED=> '手机号未已注册',
         //综合任务
     ];
     /**

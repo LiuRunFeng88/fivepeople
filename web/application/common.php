@@ -65,15 +65,10 @@ function get_remote_ip(){
  * @return string
  */
 function createTokenForLoginUser($user_id){
-    $token = \think\Cache::get(CACHE_USER_TOKEN_ID_KEY_PREFIX. $user_id);
-    if (empty($token)) {
-        $retry = 0;
-        do{
-            $retry += 1;
-            if ($retry > 10)return false;
-            $token = substr(md5(rand(1000, 9999) . $user_id . time()), 0, 16);
-            $exist = \think\Cache::get(CACHE_USER_TOKEN_KEY_PREFIX . $token);
-        }while(!empty($exist));
+    $token = substr(md5(rand(1000, 9999) . $user_id . time()), 0, 16);
+    $user_token = \think\Cache::get(CACHE_USER_TOKEN_ID_KEY_PREFIX.$user_id);
+    if (!empty($user_token)){
+        _updateUserToken($user_id,$user_token,false);
     }
     _updateUserToken($user_id,$token);
     return $token;
@@ -89,8 +84,6 @@ function getUserIdForLoginUser($token){
     if(empty($user_id)){
         return 0;
     }
-    //更新有效期
-    _updateUserToken($user_id,$token);
     return $user_id;
 }
 /**
@@ -100,8 +93,8 @@ function getUserIdForLoginUser($token){
  */
 function _updateUserToken($user_id,$token,$keep = true){
     if(!$keep){
-        \think\Cache::clear(CACHE_USER_TOKEN_ID_KEY_PREFIX. $user_id);
-        \think\Cache::clear(CACHE_USER_TOKEN_KEY_PREFIX. $token);
+        \think\Cache::rm(CACHE_USER_TOKEN_ID_KEY_PREFIX. $user_id);
+        \think\Cache::rm(CACHE_USER_TOKEN_KEY_PREFIX. $token);
     }else {
         \think\Cache::set(CACHE_USER_TOKEN_ID_KEY_PREFIX. $user_id, $token, 3600 * 24 * 7);
         \think\Cache::set(CACHE_USER_TOKEN_KEY_PREFIX. $token, $user_id, 3600 * 24 * 7);

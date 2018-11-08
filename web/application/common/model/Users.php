@@ -37,4 +37,10 @@ class Users extends Model {
         return $num;
     }
 
+    //根据手机获取用户
+    public static function find_user_by_mobile($mobile){
+        $users = self::where(['mobile'=>$mobile])->find();
+        return $users;
+    }
+
 }
