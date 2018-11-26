@@ -41,6 +41,7 @@ class User extends BaseController {
             $address['area']=$this->_data['area'];
             $address['address']=$this->_data['address'];
             $address['name'] =$this->_data['name'];
+            $address['ip'] = get_remote_ip();
             $address['created_at']=time();
             //是否设为默认地址
             if ($is_default){
