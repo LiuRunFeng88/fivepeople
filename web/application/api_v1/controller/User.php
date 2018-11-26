@@ -36,6 +36,7 @@ class User extends BaseController {
             }
             $is_default = $this->_data['is_default']??0;
             $address = array();
+            $address['user_id'] = $this->_user['id'];
             $address['mobile'] = $this->_data['mobile'];
             $address['area']=$this->_data['area'];
             $address['address']=$this->_data['address'];
