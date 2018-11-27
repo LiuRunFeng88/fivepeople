@@ -114,8 +114,23 @@ class User extends BaseController {
         }
     }
 
-
-
-
+    //删除收货地址
+    public function delete_address(){
+        try{
+            $this->_checkAppRequest();
+            if (empty($this->_data['id'])){
+                throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INPUT_ERROR),ErrorCode::INPUT_ERROR);
+            }
+            $address = \app\common\model\UsersAddress::get($this->_data['id']);
+            if (empty($address) || $address['user_id'] != $this->_user['id']){
+                throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INPUT_ERROR),ErrorCode::INPUT_ERROR);
+            }
+            $address->status = 2;
+            $address->save();
+            return suc_return();
+        }catch (\Exception $e){
+            return err_return($e->getCode(),$e->getMessage());
+        }
+    }
 
 }
