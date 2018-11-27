@@ -90,7 +90,7 @@ class User extends BaseController {
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::ERROR_LOGIN_MOBILE),ErrorCode::ERROR_LOGIN_MOBILE);
             }
             $address = \app\common\model\UsersAddress::get($this->_data['id']);
-            if (empty($address)){
+            if (empty($address) || $address['user_id'] != $this->_user['id']){
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INPUT_ERROR),ErrorCode::INPUT_ERROR);
             }
             $is_default = $this->_data['is_default']??0;
