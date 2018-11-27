@@ -42,7 +42,7 @@ class BaseController extends Controller {
                 throw new  \Exception(ErrorCode::formatErrorMsg(ErrorCode::REQUEST_TOKEN_NOT), ErrorCode::REQUEST_TOKEN_NOT);
             }
             $user_id = getUserIdForLoginUser($token);
-            if(!$user_id){
+            if(empty($user_id)){
                 throw new  \Exception(ErrorCode::formatErrorMsg(ErrorCode::REQUEST_TOKEN_ERROR), ErrorCode::REQUEST_TOKEN_ERROR);
             }
             //用户信息

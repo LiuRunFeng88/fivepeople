@@ -27,6 +27,7 @@ class User extends BaseController {
     //获取收货地址列表
     public function get_address_list(){
         try{
+            $this->_checkAppRequest();
             $page = empty($this->_data['page']) ? 1 : $this->_data['page'];
             $address_list = \app\common\model\UsersAddress::where(['user_id'=>$this->_user['id'],'status'=>['<>',2]])->field('user_id,ip,update_at',true)->paginate(null,false,['page'=>$page]);
             $result = [
@@ -45,6 +46,7 @@ class User extends BaseController {
     public function add_address(){
         Db::startTrans();
         try{
+            $this->_checkAppRequest();
             if (empty($this->_data['name']) || empty($this->_data['area']) || empty($this->_data['address'])){
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INPUT_ERROR),ErrorCode::INPUT_ERROR);
             }
@@ -80,6 +82,7 @@ class User extends BaseController {
     //修改收货地址
     public function edit_address(){
         try{
+            $this->_checkAppRequest();
             if (empty($this->_data['id']) || empty($this->_data['name']) || empty($this->_data['area']) || empty($this->_data['address'])){
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INPUT_ERROR),ErrorCode::INPUT_ERROR);
             }
