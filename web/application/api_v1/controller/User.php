@@ -24,6 +24,23 @@ class User extends BaseController {
         }
     }
 
+    //获取收货地址列表
+    public function get_address_list(){
+        try{
+            $page = empty($this->_data['page']) ? 1 : $this->_data['page'];
+            $address_list = \app\common\model\UsersAddress::where(['user_id'=>$this->_user['id'],'status'=>['<>',2]])->field('user_id,ip,update_at',true)->paginate(null,false,['page'=>$page]);
+            $result = [
+                'total' => $address_list->total(),
+                'per_page' => config('paginate.list_rows'),
+                'current_page' => $address_list->currentPage(),
+                'list'=>$address_list->all()
+            ];
+            return suc_return($result);
+        }catch (\Exception $e){
+            return err_return($e->getCode(),$e->getMessage());
+        }
+    }
+
     //添加收货地址
     public function add_address(){
         Db::startTrans();
@@ -34,7 +51,7 @@ class User extends BaseController {
             if (!preg_match('/^1[0-9]{10}$/', $this->_data['mobile'])){
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::ERROR_LOGIN_MOBILE),ErrorCode::ERROR_LOGIN_MOBILE);
             }
-            $is_default = $this->_data['is_default']??0;
+            $is_default = $this->_data['is_default'] ?? 0;
             $address = array();
             $address['user_id'] = $this->_user['id'];
             $address['mobile'] = $this->_data['mobile'];
@@ -93,6 +110,8 @@ class User extends BaseController {
             return err_return($e->getCode(),$e->getMessage());
         }
     }
+
+
 
 
 
