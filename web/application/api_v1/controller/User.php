@@ -73,11 +73,20 @@ class User extends BaseController {
             if (empty($address)){
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INPUT_ERROR),ErrorCode::INPUT_ERROR);
             }
+            $is_default = $this->_data['is_default']??0;
             $address->name = $this->_data['name'];
             $address->area = $this->_data['area'];
             $address->address = $this->_data['address'];
             $address->mobile = $this->_data['mobile'];
             $address->update_at = time();
+            //是否设为默认地址
+            if ($is_default){
+                //修改之前的默认地址
+                \app\common\model\UsersAddress::where(['user_id'=>$this->_user['id'],'status'=>1])->update(['status'=>0]);
+                $address['status']=1;
+            }else{
+                $address['status'] =0;
+            }
             $address->save();
             return suc_return();
         }catch (\Exception $e){
