@@ -28,15 +28,8 @@ class User extends BaseController {
     public function get_address_list(){
         try{
             $this->_checkAppRequest();
-            $page = empty($this->_data['page']) ? 1 : $this->_data['page'];
-            $address_list = \app\common\model\UsersAddress::where(['user_id'=>$this->_user['id'],'status'=>['<>',2]])->field('user_id,ip,update_at',true)->paginate(null,false,['page'=>$page]);
-            $result = [
-                'total' => $address_list->total(),
-                'per_page' => config('paginate.list_rows'),
-                'current_page' => $address_list->currentPage(),
-                'list'=>$address_list->all()
-            ];
-            return suc_return($result);
+            $address_list = \app\common\model\UsersAddress::where(['user_id'=>$this->_user['id'],'status'=>['<>',2]])->field('user_id,ip,update_at',true)->select();
+            return suc_return(['list'=>$address_list]);
         }catch (\Exception $e){
             return err_return($e->getCode(),$e->getMessage());
         }
@@ -126,6 +119,7 @@ class User extends BaseController {
                 throw new \Exception(ErrorCode::formatErrorMsg(ErrorCode::INPUT_ERROR),ErrorCode::INPUT_ERROR);
             }
             $address->status = 2;
+            $address->update_at = time();
             $address->save();
             return suc_return();
         }catch (\Exception $e){
