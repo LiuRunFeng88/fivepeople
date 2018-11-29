@@ -174,4 +174,20 @@ class Init extends BaseController {
         }
     }
 
+    //获取分类列表
+    public function get_category_list(){
+        try{
+            $this->_checkAppRequest();
+            $category_list = \app\common\model\Category::getCategoryList();
+            foreach ($category_list as $key=>$value){
+                $category_second = \app\common\model\CategorySecond::getCategorySecondByFatherId($value['id']);
+                $category_list[$key]['second'] = $category_second;
+                unset($category_second);
+            }
+            return suc_return(['category'=>$category_list]);
+        }catch (\Exception $e){
+            return err_return($e->getCode(),$e->getMessage());
+        }
+    }
+
 }
